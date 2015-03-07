@@ -200,7 +200,9 @@ def add_git_segment(powerline, cwd):
     if out:
         branch = out[len('refs/heads/'):].rstrip()
     else:
-        branch = '(Detached)'
+        p = subprocess.Popen(['git', 'describe', '--all', '--contains', '--abbrev=4', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        branch = out.rstrip()
 
     branch = branch.decode(encoding)
     has_pending_commits, has_untracked_files, origin_position = get_git_status()
