@@ -191,6 +191,7 @@ def get_git_status():
 
 def add_git_segment(powerline, cwd):
     #cmd = "git branch 2> /dev/null | grep -e '\\*'"
+    detached = False
     p = subprocess.Popen(['git', 'symbolic-ref', '-q', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
 
@@ -200,6 +201,7 @@ def add_git_segment(powerline, cwd):
     if out:
         branch = out[len('refs/heads/'):].rstrip()
     else:
+        detached = True
         p = subprocess.Popen(['git', 'describe', '--all', '--contains', '--abbrev=4', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         branch = out.rstrip()
