@@ -30,6 +30,8 @@ class Color:
     REPO_CLEAN_FG = 0  # black
     REPO_DIRTY_BG = 161  # pink/red
     REPO_DIRTY_FG = 15  # white
+    REPO_DETACHED_BG = 149 # a pale yellow
+    REPO_DIRTY_FG = 0 # white
 
     CMD_PASSED_BG = 236
     CMD_PASSED_FG = 15
@@ -191,6 +193,7 @@ def get_git_status():
 
 def add_git_segment(powerline, cwd):
     #cmd = "git branch 2> /dev/null | grep -e '\\*'"
+    detached = False
     p = subprocess.Popen(['git', 'symbolic-ref', '-q', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate()
 
@@ -200,7 +203,10 @@ def add_git_segment(powerline, cwd):
     if out:
         branch = out[len('refs/heads/'):].rstrip()
     else:
-        branch = '(Detached)'
+        detached = True
+        p = subprocess.Popen(['git', 'describe', '--all', '--contains', '--abbrev=4', 'HEAD'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        branch = out.rstrip()
 
     branch = branch.decode(encoding)
     has_pending_commits, has_untracked_files, origin_position = get_git_status()
@@ -213,6 +219,10 @@ def add_git_segment(powerline, cwd):
 
     if has_pending_commits:
         bg = Color.REPO_DIRTY_BG
+        fg = Color.REPO_DIRTY_FG
+
+    if detached:
+        bg = Color.REPO_DETACHED_BG
         fg = Color.REPO_DIRTY_FG
 
     powerline.append(Segment(powerline, ' %s ' % branch, fg, bg))
