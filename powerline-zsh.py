@@ -31,7 +31,7 @@ class Color:
     REPO_DIRTY_BG = 161  # pink/red
     REPO_DIRTY_FG = 15  # white
     REPO_DETACHED_BG = 149 # a pale yellow
-    REPO_DIRTY_FG = 0 # white
+    REPO_DETACHED_FG = 0 # black
 
     CMD_PASSED_BG = 236
     CMD_PASSED_FG = 15
@@ -223,7 +223,7 @@ def add_git_segment(powerline, cwd):
 
     if detached:
         bg = Color.REPO_DETACHED_BG
-        fg = Color.REPO_DIRTY_FG
+        fg = Color.REPO_DETACHED_FG
 
     powerline.append(Segment(powerline, ' %s ' % branch, fg, bg))
     return True
